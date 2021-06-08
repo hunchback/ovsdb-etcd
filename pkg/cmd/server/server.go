@@ -47,21 +47,31 @@ func main() {
 	flag.Parse()
 	defer klog.Flush()
 
-	klog.V(3).Infof("Start the ovsdb-etcd server \n the last commit: %s\n arguments:\n"+
-		"\ttcpAddress: %s\n\tunixAddressress: %s\n\tetcdMembersress: %s\n\tschemaBasedir: %s\n\tmaxTasks: %d\n"+
-		"\tdatabasePrefix: %s\n\tserviceName: %s\n\tschemaFile: %s\n\tloadServerData: %v\n\tpid_file: %s\n",
+	klog.V(3).Infof(
+		"Start the ovsdb-etcd server (commit %s)\n"+
+			"Arguments:\n"+
+			"\ttcp-address: %s\n"+
+			"\tunix-address: %s\n"+
+			"\tetcd-members: %s\n"+
+			"\tschema-basedir: %s\n"+
+			"\tmax (tasks): %d\n"+
+			"\tdatabase-prefix: %s\n"+
+			"\tservice-name: %s\n"+
+			"\tschema-file: %s\n"+
+			"\tload-server-data: %v\n"+
+			"\tpid-file: %s\n",
 		GitCommit, *tcpAddress, *unixAddress, *etcdMembers, *schemaBasedir, *maxTasks, *databasePrefix, *serviceName,
 		*schemaFile, *loadServerDataFlag, *pidfile)
 
 	if len(*tcpAddress) == 0 && len(*unixAddress) == 0 {
-		klog.Fatal("You must provide a network-address (TCP and/or UNIX) to listen on")
+		klog.Fatal("You must provide either tcp-address or unit-address")
 	}
 
 	if len(*databasePrefix) == 0 || strings.Contains(*databasePrefix, common.KEY_DELIMETER) {
-		klog.Fatal("Illegal databasePrefix %s", *databasePrefix)
+		klog.Fatal("Illegal database-prefix %s", *databasePrefix)
 	}
 	if len(*serviceName) == 0 || strings.Contains(*serviceName, common.KEY_DELIMETER) {
-		klog.Fatal("Illegal serviceName %s", *serviceName)
+		klog.Fatal("Illegal service-name %s", *serviceName)
 	}
 
 	if *pidfile != "" {
@@ -76,7 +86,7 @@ func main() {
 	common.SetPrefix(*databasePrefix + common.KEY_DELIMETER + *serviceName)
 
 	if len(*etcdMembers) == 0 {
-		klog.Fatal("Wrong ETCD members list", etcdMembers)
+		klog.Fatal("Wrong etcd-members list", etcdMembers)
 	}
 	etcdServers := strings.Split(*etcdMembers, ",")
 
